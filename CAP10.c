@@ -1,4 +1,4 @@
-#define ex4
+#define ex5
 #include "stdio.h"
 #include "stdlib.h"
 /*******
@@ -268,8 +268,97 @@ int main(){
     no arquivo.
 */
 #ifdef ex5
-main(){
 
+typedef struct agenda{
+  char nome[10];
+  char telefone[10];
+  int aniversario[2];
+}AGENDA;
+
+void inserir(AGENDA *contato, FILE *p){
+
+  if((p = fopen("agenda.txt","w"))==NULL){
+  printf("erro na abertura do arquivo \n");
+  exit(0);
+  } 
+
+  printf("\n\n Nome: ");
+  scanf("%s", contato -> nome);
+  printf(" Telefone: ");
+  scanf("%s", contato -> telefone);
+  printf(" Aniversario (dd/mm): ");
+  scanf("%d/%d", &contato -> aniversario[0], &contato -> aniversario[1]);
+  puts("\n\n");
+
+  if(fwrite(contato,sizeof(AGENDA),1,p) != 1){
+    printf(" --ERRO na isercao do contato \n");
+    exit(0);
+  }
+  else
+    printf(" --INSERIDO COM SUCESSO\n\n\n");
+
+  fclose(p);
+  
+
+}
+
+void remover(){
+
+}
+
+void buscar(){
+
+}
+
+void listar(){
+
+}
+
+void aniversarios(){
+
+}
+
+
+int main(){
+  FILE *p;
+  int opcao = 0;
+  AGENDA contato; 
+   
+
+  while(opcao != 4){
+
+    printf("\n # MENU AGENDA DE CONTATOS\n ----------------------------------------------------------------------\n");
+    printf(" (1) INSERIR |");
+    printf(" (2) LISTAR |");
+    printf(" (3) BUSCAR POR NOME |");
+    printf(" (4) BUSCAR POR INICIAL |\n");
+    printf(" (5) EXCLUIR |");
+    printf(" (6) ANIVERSARIANTES DO MES |");
+    printf(" (7) SAIR \n");
+    printf(" ----------------------------------------------------------------------\n");
+    printf("\n opcao:> ");
+    scanf("%d", &opcao);
+    getchar();
+  
+
+    switch(opcao){
+      case 1: inserir(&contato, p);
+              break;
+      // case 2: ;
+      //         break;
+      // case 3: ;
+      //         break;
+      // case 4: ;
+      //         break;
+      // case 5: ;
+      //         break;
+      // case 6: ;
+      //         break;
+      // case 7: ;
+      //         break;
+      default: printf("\n --OPCAO INVALIDA\n\n\n\n");
+    }
+  }
 }
 #endif // ex
 /**
