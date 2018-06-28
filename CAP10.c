@@ -270,14 +270,14 @@ int main(){
 #ifdef ex5
 
 typedef struct agenda{
-  char nome[10];
+  char nome[20];
   char telefone[10];
   int aniversario[2];
 }AGENDA;
 
-void inserir(AGENDA *contato, FILE *p){
+void inserir(AGENDA *contato, FILE *p, FILE *i, int *n){
 
-  if((p = fopen("agenda","w"))==NULL){
+  if(!(p = fopen("agenda","a"))){
     printf("erro na abertura do arquivo \n");
     exit(0);
   } 
@@ -294,10 +294,21 @@ void inserir(AGENDA *contato, FILE *p){
     printf(" --ERRO na isercao do contato \n");
     exit(0);
   }
-  else
+  else{
     printf(" --INSERIDO COM SUCESSO\n\n\n");
-
+    *n += 1; //incrementa numero de contatos da agenda
+  }
+  //printf("%d\n",*n);
   fclose(p);
+
+  if(!(i = fopen("n_contatos","w"))){
+      printf("erro na abertura do arquivo contador \n");
+      exit(0);
+    }
+    //printf("%d\n",*n); 
+    fprintf(i,"%d", *n);
+    fclose(i);
+  
 }
 
 void remover(){
@@ -308,20 +319,30 @@ void buscar(){
 
 }
 
-void listar(AGENDA *contato, FILE *p){
-  if((p = fopen("agenda","r"))==NULL){
+void listar(AGENDA *contato, FILE *p, int n){
+  int i;
+  long desloc;
+
+  if(!(p = fopen("agenda","r"))){
     printf("erro na abertura do arquivo \n");
     exit(0);
   }
+  for (int i = 0; i < n; ++i){
+    desloc = i * sizeof(AGENDA);
+    fseek(p,desloc,0);
 
-  if(fread(contato,sizeof(AGENDA),1,p) != 1){
-    printf(" --ERRO na listagem do contato\n");
-    exit(0);
-  }  
+    fread(contato, sizeof(AGENDA), 1, p);
 
-  printf("\n\n Nome: %s\n", contato -> nome);
-  printf(" Tel.: %s\n", contato -> telefone);
-  printf(" Aniv.: %d/%d\n\n\n", contato -> aniversario[0], contato -> aniversario[1]);
+    // if(fread(contato, sizeof(AGENDA), 1, p) != 1){
+    //   printf(" --ERRO na listagem do contato\n");
+    //   exit(0);
+    // }  
+
+    printf("\n\n Nome: %s\n", contato -> nome);
+    printf(" Tel.: %s\n", contato -> telefone);
+    printf(" Aniv.: %d/%d\n", contato -> aniversario[0], contato -> aniversario[1]);
+  }
+  puts("\n\n");
 
   fclose(p);
 }
@@ -332,9 +353,25 @@ void aniversarios(){
 
 
 int main(){
-  FILE *p;
-  int opcao = 0;
-  AGENDA contato; 
+  FILE *p, *i;
+  int opcao = 0, n_contatos;
+  AGENDA contato;
+
+  if(!(i = fopen("n_contatos","r"))){
+    if(!(i = fopen("n_contatos","w"))){
+      printf("erro na abertura do arquivo contador \n");
+      exit(0);
+    } else{
+        n_contatos = 0;
+        fprintf(i,"%d", n_contatos);
+        fclose(i);
+    }
+  }
+    fscanf(i,"%d ", &n_contatos);
+    fclose(i);
+  
+
+  
    
 
   while(opcao != 4){
@@ -354,9 +391,9 @@ int main(){
   
 
     switch(opcao){
-      case 1: inserir(&contato, p);
+      case 1: inserir(&contato, p, i, &n_contatos);
               break;
-      case 2: listar(&contato, p);;
+      case 2: listar(&contato, p, n_contatos);;
               break;
       // case 3: ;
       //         break;
