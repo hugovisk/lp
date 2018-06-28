@@ -277,9 +277,9 @@ typedef struct agenda{
 
 void inserir(AGENDA *contato, FILE *p){
 
-  if((p = fopen("agenda.txt","w"))==NULL){
-  printf("erro na abertura do arquivo \n");
-  exit(0);
+  if((p = fopen("agenda","w"))==NULL){
+    printf("erro na abertura do arquivo \n");
+    exit(0);
   } 
 
   printf("\n\n Nome: ");
@@ -298,8 +298,6 @@ void inserir(AGENDA *contato, FILE *p){
     printf(" --INSERIDO COM SUCESSO\n\n\n");
 
   fclose(p);
-  
-
 }
 
 void remover(){
@@ -310,8 +308,22 @@ void buscar(){
 
 }
 
-void listar(){
+void listar(AGENDA *contato, FILE *p){
+  if((p = fopen("agenda","r"))==NULL){
+    printf("erro na abertura do arquivo \n");
+    exit(0);
+  }
 
+  if(fread(contato,sizeof(AGENDA),1,p) != 1){
+    printf(" --ERRO na listagem do contato\n");
+    exit(0);
+  }  
+
+  printf("\n\n Nome: %s\n", contato -> nome);
+  printf(" Tel.: %s\n", contato -> telefone);
+  printf(" Aniv.: %d/%d\n\n\n", contato -> aniversario[0], contato -> aniversario[1]);
+
+  fclose(p);
 }
 
 void aniversarios(){
@@ -344,8 +356,8 @@ int main(){
     switch(opcao){
       case 1: inserir(&contato, p);
               break;
-      // case 2: ;
-      //         break;
+      case 2: listar(&contato, p);;
+              break;
       // case 3: ;
       //         break;
       // case 4: ;
