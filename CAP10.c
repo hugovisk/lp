@@ -315,8 +315,44 @@ void remover(){
 
 }
 
-void buscar(){
+void buscar(AGENDA *contato, FILE *p, int n){
+  char busca[20];
+  int i, j, n_encontrado = 0, i_encontrado[n];
+  long desloc;
 
+  printf(" Buscar: ");
+  scanf(" %s", &busca[0]);
+
+  if(!(p = fopen("agenda","r"))){
+    printf("erro na abertura do arquivo \n");
+    exit(0);
+  }
+
+  for (int i = 0; i < n; ++i){
+    desloc = i * sizeof(AGENDA);
+    fseek(p,desloc,0);
+
+    if(fread(contato, sizeof(AGENDA), 1, p) != 1){
+      printf(" --ERRO na listagem do contato\n");
+      exit(0);
+    }  
+
+    if(contato -> nome[0] != '*'){
+      for(j = 0; j < 20; j++){
+        if ( busca[j] != contato -> nome[j]){
+          //printf("\n DIFERENTES");
+          break;
+        }else if (busca[j] == '\0'){
+          //printf("\n IGUAIS");
+          i_encontrado[n_encontrado] = i;
+          n_encontrado++;                
+          break;
+        }
+      }
+    }    
+  }
+
+  fclose(p);    
 }
 
 void listar(AGENDA *contato, FILE *p, int n){
@@ -331,16 +367,18 @@ void listar(AGENDA *contato, FILE *p, int n){
     desloc = i * sizeof(AGENDA);
     fseek(p,desloc,0);
 
-    fread(contato, sizeof(AGENDA), 1, p);
 
-    // if(fread(contato, sizeof(AGENDA), 1, p) != 1){
-    //   printf(" --ERRO na listagem do contato\n");
-    //   exit(0);
-    // }  
+    if(fread(contato, sizeof(AGENDA), 1, p) != 1){
+      printf(" --ERRO na listagem do contato\n");
+      exit(0);
+    }  
 
-    printf("\n\n Nome: %s\n", contato -> nome);
-    printf(" Tel.: %s\n", contato -> telefone);
-    printf(" Aniv.: %d/%d\n", contato -> aniversario[0], contato -> aniversario[1]);
+    if(contato -> nome[0] != '*'){
+      printf("\n\n Nome: %s\n", contato -> nome);
+      printf(" Tel.: %s\n", contato -> telefone);
+      printf(" Aniv.: %d/%d\n", contato -> aniversario[0], contato -> aniversario[1]);
+    }
+    
   }
   puts("\n\n");
 
@@ -368,10 +406,7 @@ int main(){
     }
   }
     fscanf(i,"%d ", &n_contatos);
-    fclose(i);
-  
-
-  
+    fclose(i);  
    
 
   while(opcao != 4){
@@ -393,7 +428,7 @@ int main(){
     switch(opcao){
       case 1: inserir(&contato, p, i, &n_contatos);
               break;
-      case 2: listar(&contato, p, n_contatos);;
+      case 2: listar(&contato, p, n_contatos);
               break;
       // case 3: ;
       //         break;
@@ -402,8 +437,6 @@ int main(){
       // case 5: ;
       //         break;
       // case 6: ;
-      //         break;
-      // case 7: ;
       //         break;
       default: printf("\n --OPCAO INVALIDA\n\n\n\n");
     }
